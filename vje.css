@@ -109,7 +109,7 @@ transform: rotate(-3deg);
 transform-origin: top left;
 
 }
-main > article { }{}
+main article { }
 a,a:visited {color: #016391; text-decoration: none;}
 a:hover{  color: #333; }
 

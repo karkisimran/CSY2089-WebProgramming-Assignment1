@@ -1,159 +1,166 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>v.je server is running</title>
-		<link href='https://fonts.googleapis.com/css?family=Oxygen:400,300' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="vje.css"/>
+		<title>Carbuy Auctions</title>
+		<link rel="stylesheet" href="carbuy.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 	</head>
+
 	<body>
+		<header>
+			<h1><span class="C">C</span>
+ 			<span class="a">a</span>
+			<span class="r">r</span>
+			<span class="b">b</span>
+			<span class="u">u</span>
+			<span class="y">y</span></h1>
 
-	<main>
-		<article>
-		<section>
-		<div>
-		<h2>v.je server is running</h2>
+			<form action="#">
+				<input type="text" name="search" placeholder="Search for a car" />
+				<input type="submit" name="submit" value="Search" />
+			</form>
+		</header>
 
-		<p>If you are seeing this page, you can now write files to the <code>websites/default/public</code> directory and they will be accessible.</p>
-		</div>
+		<nav>
+			<ul>
+				<li><a class="categoryLink" href="#">Estate</a></li>
+				<li><a class="categoryLink" href="#">Electric</a></li>
+				<li><a class="categoryLink" href="#">Coupe</a></li>
+				<li><a class="categoryLink" href="#">Saloon</a></li>
+				<li><a class="categoryLink" href="#">4x4</a></li>
+				<li><a class="categoryLink" href="#">Sports</a></li>
+				<li><a class="categoryLink" href="#">Hybrid</a></li>
+				<li><a class="categoryLink" href="#">More</a></li>
 
-	</section>
-	<section>
+				<?php if (isset($_SESSION['user_id']) && $_SESSION['is_admin'] == 1): ?>
+  				<li><a href="adminDashboard.php" style="color: black; font-size: 25px;">
+      				<i class="fa-solid fa-user"></i>
+				</a>
+				</li>
+				<?php elseif (isset($_SESSION['user_id']) && $_SESSION['is_admin'] == 0): ?>
+  				<li>
+    				<a href="profile.php" style="color: black; font-size: 25px;">
+      				<i class="fa-solid fa-user"></i>
+    				</a>
+  				</li>
+				<?php else: ?>
+  				<li><a class="authLink" href="login.php">Login</a></li>
+				<?php endif; ?>
+  			</ul>
+		</nav>
 
-		<div>
-		<h2>Getting started</h2>
-		<p>Try the following:</p>
+		<img src="banners/1.jpg" alt="Banner" />
 
-		<ol>
-			<li>Create a new file <code>websites/default/public/test.html</code></li>
-			<li>Paste in the following code:
+		<main>
+			<h1>Latest Car Listings / Search Results / Category listing</h1>
+			<ul class="carList">
+				<li>
+					<img src="car.png" alt="car name">
+					<article>
+						<h2>Car model and make</h2>
+						<h3>Car category</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
 
-			<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-	&lt;head&gt;
-		&lt;title&gt;My Web Page&lt;/title&gt;
-	&lt;/head&gt;
-	&lt;body&gt;
-		Hello World!
-	&lt;/body&gt;
-&lt;/html&gt;
-</code>
-			</pre></li>
+						<p class="price">Current bid: £1234.00</p>
+						<a href="#" class="more auctionLink">More &gt;&gt;</a>
+					</article>
+				</li>
+				<li>
+					<img src="car.png" alt="car name">
+					<article>
+						<h2>Car model and make</h2>
+						<h3>Car category</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
 
-			<li>Navigate to <a href="https://<?=
-$_SERVER['HTTP_HOST']; ?>/test.html">https://<?= $_SERVER['HTTP_HOST'];
-?>/test.html</a> and you should see your web page</li>
+						<p class="price">Current bid: £2000</p>
+						<a href="#" class="more auctionLink">More &gt;&gt;</a>
+					</article>
+				</li>
+				<li>
+					<img src="car.png" alt="car name">
+					<article>
+						<h2>Car model and make</h2>
+						<h3>Car category</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
 
+						<p class="price">Current bid: £3000</p>
+						<a href="#" class="more auctionLink">More &gt;&gt;</a>
+					</article>
+				</li>
+			</ul>
 
-		</ol>
-	</div>
-</section>
+			<hr />
 
+			<h1>Car Page</h1>
+			<article class="car">
 
+					<img src="car.png" alt="car name">
+					<section class="details">
+						<h2>Car model and make</h2>
+						<h3>Car category</h3>
+						<p>Auction created by <a href="#">User.Name</a></p>
+						<p class="price">Current bid: £4000</p>
+						<time>Time left: 8 hours 3 minutes</time>
+						<form action="#" class="bid">
+							<input type="text" name="bid" placeholder="Enter bid amount" />
+							<input type="submit" value="Place bid" />
+						</form>
+					</section>
+					<section class="description">
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
 
-<section>
-<h2>Features</h2>
-<ol>
-    <li>All hosted websites use HTTPS with a <strong>valid SSL certificate</strong> from Let's Encrypt</li>
-    <li>No configuration needed. Run <code class="inline">docker-compose up</code> and your website is hosted on <a href="https://v.je">https://v.je/</a></li>
-    <li>Without configuration host different websites on v.je subdomains e.g. <a href="https://subdomain1.v.je">https://subdomain1.v.je/</a> and  <a href="https://subdomain2.v.je">https://subdomain2.v.je/</a></li>
-    <li>Includes up to date PHP development software*:
-        <ul>
-            <li>PHP</li>
-            <li>NGINX</li>
-            <li>MariaDB</li>
-            <li>Composer</li>
-            <li>PHPUnit</li>
-        </ul>
-    </li>
-    <li>Portability: You can run <code class="inline">docker-compose stop</code> on one machine, copy the folder, then <code class="inline">docker-compose up</code> on another and your website will be visible. The database is automatically imported and exported. Most environments store the database inside a local volume. If you move your files to a different PC the database is lost. That's not the case with this environment.</li>
-    <li>URL rewriting is already set up. A request to any file that does not exist is sent to index.php</li>
-</ol>
+					</section>
 
-</section>
+					<section class="reviews">
+						<h2>Reviews of User.Name </h2>
+						<ul>
+							<li><strong>John said </strong> great car seller! Car was as advertised and delivery was quick <em>29/01/2024</em></li>
+							<li><strong>Dave said </strong> disappointing, Car was slightly damaged and arrived slowly.<em>22/12/2023</em></li>
+							<li><strong>Susan said </strong> great value but the delivery was slow <em>22/07/2023</em></li>
 
-<section>
-    <h2>MySQL</h2>
+						</ul>
 
-    <p>Connect to MySQL from your desktop using:</p>
+						<form>
+							<label>Add your review</label> <textarea name="reviewtext"></textarea>
 
-    <ul>
-        <li>Host: <strong>v.je</strong></li>
-        <li>Port: <strong>3306</strong></li>
-        <li>Username: <strong>v.je</strong></li>
-        <li>Password: <strong>v.je</strong></li>
-    </ul>
-    
-    <p>To connect to the server from PHP you must use <strong>mysql</strong> as the host. For example: </p>
-    
-    <code>
-&lt;?php
-$pdo = new PDO('mysql:dbname=test;host=mysql', 'v.je', 'v.je');
-</code>
+							<input type="submit" name="submit" value="Add Review" />
+						</form>
+					</section>
+					</article>
 
-    <p>This MySQL user has full access to create schemas and other users. I suggest using MySQL Workbench but you can install the clunky PHPMyAdmin tool if you want a worse experience.</p>
-</section>
+					<hr />
+					<h1>Sample Form</h1>
 
-<section>
-    <h2>Starting and stopping the server</h2>
+					<form action="#">
+						<label>Text box</label> <input type="text" />
+						<label>Another Text box</label> <input type="text" />
+						<input type="checkbox" /> <label>Checkbox</label>
+						<input type="radio" /> <label>Radio</label>
+						<input type="submit" value="Submit" />
 
-    <p>To start the server, run the command <code class="inline">docker-compose up -d</code> from the project's directory.</p>
-    <p>To stop the server, run the command <code class="inline">docker-compose down</code> from the project's directory</p>
-</section>
+					</form>
 
+			<footer>
+				&copy; Carbuy <?php echo date('Y'); ?>
+			</footer>
+		</main>
+		<script>
+	function toggleDropdown() {
+		const dropdown = document.getElementById('dropdown');
+		dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	}
 
-<section>
-    <h2>Hosting multiple websites</h2>
+	document.addEventListener('click', function (e) {
+		const icon = document.querySelector('.profile-icon');
+		const dropdown = document.getElementById('dropdown');
+		if (!icon.contains(e.target) && !dropdown.contains(e.target)) {
+			dropdown.style.display = 'none';
+		}
+	});
+</script>
 
-    <p>The environment is configured to host multiple websites from different folders within the created <code class="inline">websites</code> directory. To create a new website which is available on <a href="https://mysite.v.je">https://mysite.v.je/</a>:</p>
-
-    <ol>
-        <li>Create the directory <code class="inline">mysite</code> inside the <code class="inline">websites</code> directory.</li>
-        <li>Create the directory <code class="inline">public</code> inside the <code class="inline">mysite</code> directory.</li>
-        <li>Place your web-accessible files inside the <code class="inline">websites/mysite/public</code> directory. For example, the file in <code class="inline">websites/mysite/public/phpinfo.php</code> will be accessible on the URL <a href="https://mysite.v.je">https://mysite.v.je/phpinfo.php</a></li>
-    </ol>
-
-    <p>Any directory you create inside the <code class="inline">websites</code> directory is treated as a subdomain of <code class="inline">v.je</code></p>
-</section>
-
-<section id="import">
-    <h2>Easily import databases</h2>
-
-    <p>You can import an SQL database automatically while the server is running. Create the file <code class="inline">websites/import.sql</code>, the SQL script inside the file will be executed and the import.sql file deleted.</p>
-</section>
-
-<section>
-    <h2>PHPUnit</h2>
-
-    <p>To run PHPUnit tests you can use the command:</p>
-    
-    <code>
-docker-compose run phpunit
-    </code>
-    
-    <p>This will run PHPUnit from the context of the <code class="inline">websites/default</code> directory and look for <code class="inline">phpunit.xml</code> at the path <code class="inline">websites/default/phpunit.xml</code>. If you wish to run unit tests for another directory you can specify it as a command line argument. For example to run php unit tests from the <code class="inline">websites/subdomain</code> directory you can run the command </p>
-    
-        <code>
-docker-compose run phpunit /websites/subdomain
-    </code>
-</section>
-
-
-<section>
-    <h2>Composer</h2>
-    <p>Composer is included and like PHPUnit defaults to the <code class="inline">websites/default</code> directory. Running the following command:</p>
-    
-    <code>
-docker-compose run composer require level-2/dice
-</code>
-
-<p>Will create a vendor directory and install <a href="https://r.je/dice">Dice Dependency Injection Container</a> in <code class="inline">websites/default/vendor</code>. To specify a different folder, pass the directory to the command using the <code class="inline">-d</code> switch:</p>
-
-    <code>
-docker-compose run composer require level-2/dice -d /websites/subdomain
-</code>
-
-</section>
-</article>
-	</main>
-</body>
+	</body>
 </html>
