@@ -35,19 +35,19 @@
 
 				
 				<?php if (isset($_SESSION['user_id'])): ?>
-      <li>
-	  <a href="profile.php" style="color: black; font-size: 20px;">
-  <i class="fa-solid fa-user"></i>
-</a>
+      		<li>
+	  			<a href="profile.php" style="color: black; font-size: 20px;">
+  					<i class="fa-solid fa-user"></i>
+				</a>
 
-      </li>
-    <?php else: ?>
-      <li><a class="authLink" href="login.php">Login</a></li>
-    <?php endif; ?>
-  </ul>
-</nav>
+      		</li>
+   	 			<?php else: ?>
+     			<li><a class="authLink" href="login.php">Login</a></li>
+    			<?php endif; ?>
+  			</ul>
+		</nav>
 <?php
-require_once('dbconnect.php');
+require_once('db.php');
 $categories = $Connection->query("SELECT * FROM category ORDER BY category_name ASC")->fetchAll();
 ?>
 

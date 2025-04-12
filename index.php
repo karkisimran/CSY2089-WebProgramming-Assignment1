@@ -1,166 +1,84 @@
-<?php session_start(); ?>
+<?php
+require 'db.php';
+
+// Fetch the top 10 auctions ending soon with category and user info
+$sql = "
+    SELECT a.*, c.category_name, u.username,
+    (SELECT MAX(bid_amount) FROM bid WHERE auction_id = a.id) AS current_bid
+    FROM auction a
+    JOIN category c ON a.categoryId = c.category_id
+    JOIN user u ON a.userId = u.id
+    ORDER BY a.endDate ASC
+    LIMIT 10
+";
+
+$stmt = $Connection->query($sql);
+$auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>Carbuy Auctions</title>
-		<link rel="stylesheet" href="carbuy.css" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Car Auction</title>
+    <link rel="stylesheet" href="carbuy.css">
+    <style>
+        .auction-box {
+            border: 1px solid #ccc;
+            padding: 1vw;
+            margin: 1vw auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-	</head>
+        .auction-box h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
 
-	<body>
-		<header>
-			<h1><span class="C">C</span>
- 			<span class="a">a</span>
-			<span class="r">r</span>
-			<span class="b">b</span>
-			<span class="u">u</span>
-			<span class="y">y</span></h1>
+        .auction-box p {
+            font-size: 1em;
+            margin: 0.5em 0;
+            color: #444;
+        }
 
-			<form action="#">
-				<input type="text" name="search" placeholder="Search for a car" />
-				<input type="submit" name="submit" value="Search" />
-			</form>
-		</header>
+        .auction-box a {
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #007bff;
+        }
 
-		<nav>
-			<ul>
-				<li><a class="categoryLink" href="#">Estate</a></li>
-				<li><a class="categoryLink" href="#">Electric</a></li>
-				<li><a class="categoryLink" href="#">Coupe</a></li>
-				<li><a class="categoryLink" href="#">Saloon</a></li>
-				<li><a class="categoryLink" href="#">4x4</a></li>
-				<li><a class="categoryLink" href="#">Sports</a></li>
-				<li><a class="categoryLink" href="#">Hybrid</a></li>
-				<li><a class="categoryLink" href="#">More</a></li>
+        .auction-box a:hover {
+            color: #0056b3;
+        }
 
-				<?php if (isset($_SESSION['user_id']) && $_SESSION['is_admin'] == 1): ?>
-  				<li><a href="adminDashboard.php" style="color: black; font-size: 25px;">
-      				<i class="fa-solid fa-user"></i>
-				</a>
-				</li>
-				<?php elseif (isset($_SESSION['user_id']) && $_SESSION['is_admin'] == 0): ?>
-  				<li>
-    				<a href="profile.php" style="color: black; font-size: 25px;">
-      				<i class="fa-solid fa-user"></i>
-    				</a>
-  				</li>
-				<?php else: ?>
-  				<li><a class="authLink" href="login.php">Login</a></li>
-				<?php endif; ?>
-  			</ul>
-		</nav>
+        h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<?php include 'header.php'; ?>
 
-		<img src="banners/1.jpg" alt="Banner" />
+<h2>Top 10 Auctions Ending Soon</h2>
 
-		<main>
-			<h1>Latest Car Listings / Search Results / Category listing</h1>
-			<ul class="carList">
-				<li>
-					<img src="car.png" alt="car name">
-					<article>
-						<h2>Car model and make</h2>
-						<h3>Car category</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
+<?php foreach ($auctions as $auction): ?>
+    <div class="auction-box">
+        <h3><?= htmlspecialchars($auction['title']) ?></h3>
+        <p><strong>Category:</strong> <?= htmlspecialchars($auction['category_name']) ?></p>
+        <p><?= htmlspecialchars($auction['description']) ?></p>
+        <p><strong>Ends on:</strong> <?= htmlspecialchars($auction['endDate']) ?></p>
+        <p><strong>Posted by:</strong> <?= htmlspecialchars($auction['username']) ?></p>
+        <p><strong>Current Bid:</strong> £<?= htmlspecialchars($auction['current_bid'] ?? '0') ?></p>
+        <a href="auction.php?auction-id=<?= $auction['id'] ?>">More &gt;&gt;</a>
+    </div>
+<?php endforeach; ?>
 
-						<p class="price">Current bid: £1234.00</p>
-						<a href="#" class="more auctionLink">More &gt;&gt;</a>
-					</article>
-				</li>
-				<li>
-					<img src="car.png" alt="car name">
-					<article>
-						<h2>Car model and make</h2>
-						<h3>Car category</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
-
-						<p class="price">Current bid: £2000</p>
-						<a href="#" class="more auctionLink">More &gt;&gt;</a>
-					</article>
-				</li>
-				<li>
-					<img src="car.png" alt="car name">
-					<article>
-						<h2>Car model and make</h2>
-						<h3>Car category</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
-
-						<p class="price">Current bid: £3000</p>
-						<a href="#" class="more auctionLink">More &gt;&gt;</a>
-					</article>
-				</li>
-			</ul>
-
-			<hr />
-
-			<h1>Car Page</h1>
-			<article class="car">
-
-					<img src="car.png" alt="car name">
-					<section class="details">
-						<h2>Car model and make</h2>
-						<h3>Car category</h3>
-						<p>Auction created by <a href="#">User.Name</a></p>
-						<p class="price">Current bid: £4000</p>
-						<time>Time left: 8 hours 3 minutes</time>
-						<form action="#" class="bid">
-							<input type="text" name="bid" placeholder="Enter bid amount" />
-							<input type="submit" value="Place bid" />
-						</form>
-					</section>
-					<section class="description">
-					<p>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales ornare purus, non laoreet dolor sagittis id. Vestibulum lobortis laoreet nibh, eu luctus purus volutpat sit amet. Proin nec iaculis nulla. Vivamus nec tempus quam, sed dapibus massa. Etiam metus nunc, cursus vitae ex nec, scelerisque dapibus eros. Donec ac diam a ipsum accumsan aliquet non quis orci. Etiam in sapien non erat dapibus rhoncus porta at lorem. Suspendisse est urna, egestas ut purus quis, facilisis porta tellus. Pellentesque luctus dolor ut quam luctus, nec porttitor risus dictum. Aliquam sed arcu vehicula, tempor velit consectetur, feugiat mauris. Sed non pellentesque quam. Integer in tempus enim.</p>
-
-					</section>
-
-					<section class="reviews">
-						<h2>Reviews of User.Name </h2>
-						<ul>
-							<li><strong>John said </strong> great car seller! Car was as advertised and delivery was quick <em>29/01/2024</em></li>
-							<li><strong>Dave said </strong> disappointing, Car was slightly damaged and arrived slowly.<em>22/12/2023</em></li>
-							<li><strong>Susan said </strong> great value but the delivery was slow <em>22/07/2023</em></li>
-
-						</ul>
-
-						<form>
-							<label>Add your review</label> <textarea name="reviewtext"></textarea>
-
-							<input type="submit" name="submit" value="Add Review" />
-						</form>
-					</section>
-					</article>
-
-					<hr />
-					<h1>Sample Form</h1>
-
-					<form action="#">
-						<label>Text box</label> <input type="text" />
-						<label>Another Text box</label> <input type="text" />
-						<input type="checkbox" /> <label>Checkbox</label>
-						<input type="radio" /> <label>Radio</label>
-						<input type="submit" value="Submit" />
-
-					</form>
-
-			<footer>
-				&copy; Carbuy <?php echo date('Y'); ?>
-			</footer>
-		</main>
-		<script>
-	function toggleDropdown() {
-		const dropdown = document.getElementById('dropdown');
-		dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-	}
-
-	document.addEventListener('click', function (e) {
-		const icon = document.querySelector('.profile-icon');
-		const dropdown = document.getElementById('dropdown');
-		if (!icon.contains(e.target) && !dropdown.contains(e.target)) {
-			dropdown.style.display = 'none';
-		}
-	});
-</script>
-
-	</body>
+</body>
 </html>

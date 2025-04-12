@@ -17,19 +17,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($user && password_verify($password, $user['password'])) {
           $_SESSION['logged-in'] = true;
-          $_SESSION['user_id'] = $user['id']; // ← Corrected here
+          $_SESSION['user_id'] = $user['id']; 
           $_SESSION['username'] = $user['username'];
           $_SESSION['email'] = $user['email'];
-          $_SESSION['is_admin'] = $user['is_admin']; // Store whether the user is an admin (1) or not (0)
-
+          $_SESSION['is_admin'] = $user['is_admin']; // store from DB
       
-          header("Location: " . ($username === 'admin' ? 'adminCategories.php' : 'index.php'));
-          exit();
-      
-        } else {
+          // only set admin session if is_admin == 1
+          if ($user['is_admin']) {
+              $_SESSION['admin'] = true;
+              header("Location: adminCategories.php");
+          } else {
+              $_SESSION['admin'] = false;
+              header("Location: index.php");
+          }
+      }
+       else {
             $error = "❌ Invalid username or password.";
         }
-    }
+        exit();
+}
 }
 
 ?>
