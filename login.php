@@ -1,12 +1,12 @@
 <?php
-require('db.php');
+require_once 'db.php'; 
 session_start();
 
 $error = ''; 
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+    $username = $_POST['username'] ;
+    $password = $_POST['password'] ;
 
     if (!$username || !$password) {
         $error = "Please enter both username and password.";
@@ -22,23 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           $_SESSION['email'] = $user['email'];
           $_SESSION['is_admin'] = $user['is_admin']; // store from DB
       
-          // only set admin session if is_admin == 1
-          if ($user['is_admin']) {
-              $_SESSION['admin'] = true;
-              header("Location: adminCategories.php");
-          } else {
-              $_SESSION['admin'] = false;
-              header("Location: index.php");
-          }
-      }
-       else {
-            $error = "❌ Invalid username or password.";
-        }
+      
+          header('Location: index.php');
         exit();
+    } else {
+        // Show error if login fails
+        $error = "Invalid credentials.";
+    }
+  }
 }
-}
-
 ?>
+    
+    
 
 <!DOCTYPE html>
 <html lang="en">
@@ -128,15 +123,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <div class="login-box">
     <h2>Welcome Back</h2>
     <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
-    <form action="login.php" method="post">
-      <label for="username">Username</label>
-      <input type="text" name="username" id="username" required />
-
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" required />
-
-      <button type="submit">Log In</button>
-    </form>
+    <form method="POST">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br><br>
+    <label>Password:</label>
+    <input type="password" name="password" required><br>
+    <button type="submit">Login</button>
+</form>
+<?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
     <p>New here? <a href="register.php">Create an account</a></p>
   </div>
 </body>

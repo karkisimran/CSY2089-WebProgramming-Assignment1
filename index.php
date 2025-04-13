@@ -1,20 +1,22 @@
 <?php
 require 'db.php';
+include 'includes/header.php';
 
-// Fetch the top 10 auctions ending soon with category and user info
-$sql = "
-    SELECT a.*, c.category_name, u.username,
-    (SELECT MAX(bid_amount) FROM bid WHERE auction_id = a.id) AS current_bid
-    FROM auction a
-    JOIN category c ON a.categoryId = c.category_id
-    JOIN user u ON a.userId = u.id
-    ORDER BY a.endDate ASC
-    LIMIT 10
-";
+// Check if user is logged in
+if (!isset($_SESSION['logged-in']) || !$_SESSION['logged-in']) {
+    header('Location: login.php');
+    exit();
+}
 
-$stmt = $Connection->query($sql);
-$auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Fetch user-specific auctions if not admin
+$auctions = [];
+if ($_SESSION['is_admin'] == 0) {
+    $stmt = $Connection->prepare("SELECT * FROM auction WHERE userId = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +31,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin: 1vw auto;
             max-width: 800px;
             border-radius: 10px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
             font-family: 'Segoe UI', sans-serif;
         }
 
@@ -61,24 +63,83 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-size: 2em;
             margin-top: 30px;
         }
+
+        .auction-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px auto;
+            gap: 20px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .auction-actions a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .auction-actions a:hover {
+            background-color: rgb(46, 129, 216);
+        }
     </style>
 </head>
 <body>
-<?php include 'header.php'; ?>
 
-<h2>Top 10 Auctions Ending Soon</h2>
+    <h1>Welcome, <?= htmlspecialchars($_SESSION['username']) ?>!</h1>
 
-<?php foreach ($auctions as $auction): ?>
-    <div class="auction-box">
-        <h3><?= htmlspecialchars($auction['title']) ?></h3>
-        <p><strong>Category:</strong> <?= htmlspecialchars($auction['category_name']) ?></p>
-        <p><?= htmlspecialchars($auction['description']) ?></p>
-        <p><strong>Ends on:</strong> <?= htmlspecialchars($auction['endDate']) ?></p>
-        <p><strong>Posted by:</strong> <?= htmlspecialchars($auction['username']) ?></p>
-        <p><strong>Current Bid:</strong> £<?= htmlspecialchars($auction['current_bid'] ?? '0') ?></p>
-        <a href="auction.php?auction-id=<?= $auction['id'] ?>">More &gt;&gt;</a>
-    </div>
-<?php endforeach; ?>
+    <!-- Show different content based on the role -->
+    <?php if ($_SESSION['is_admin'] == 1): ?>
+        <!-- Admin Dashboard Link -->
+        <h2>Admin Dashboard</h2>
+        <a href="adminDashboard.php">Go to Admin Dashboard</a>
+    <?php else: ?>
+        <!-- User Auctions -->
+        <h2>Your Auctions</h2>
+
+        <?php if (isset($_SESSION['user_id']) && $_SESSION['is_admin'] == 0): ?>
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="postAuction.php" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                    Post Auction
+                </a>
+            </div>
+        <?php endif; ?>
+
+        <div class="auction-container">
+            <?php foreach ($auctions as $auction): ?>
+                <div style="text-align: center; margin: 20px 0;">
+                    <h3><?= htmlspecialchars($auction['title']) ?></h3>
+                    <p><strong>Ends:</strong> <?= htmlspecialchars($auction['endDate']) ?></p>
+                    <div class="auction-actions">
+                        <a href="editAuction.php?id=<?= $auction['id'] ?>">Edit</a>
+                        <a href="deleteAuction.php?id=<?= $auction['id'] ?>" onclick="return confirm('Are you sure you want to delete this auction?');">Delete</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <h2>Top 10 Auctions Ending Soon</h2>
+
+<ul class="carList">
+    <?php foreach ($auctions as $auction): ?>
+        <li>
+            <img src="images/auction<?= htmlspecialchars($auction['image'] ?? 'default.jpg') ?>" alt="<?= htmlspecialchars($auction['title'] ?? 'Car') ?>">
+            <article>
+                <h2><?= htmlspecialchars($auction['title'] ?? 'Car model and make') ?></h2>
+                <h3><?= htmlspecialchars($auction['category_name'] ?? 'Car category') ?></h3>
+                <p><?= htmlspecialchars($auction['description'] ?? 'No description available.') ?></p>
+                <p class="price">Current bid: £<?= htmlspecialchars($auction['current_bid'] ?? '0') ?></p>
+                <a href="auction.php?auction-id=<?= $auction['id'] ?>" class="more auctionLink">More &gt;&gt;</a>
+            </article>
+        </li>
+    <?php endforeach; ?>
+</ul>
 
 </body>
 </html>
